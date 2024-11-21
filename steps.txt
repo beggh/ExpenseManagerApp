@@ -1,0 +1,16 @@
+Packaging && Building
+docker network create springboot-postgres-net
+mvn clean install
+docker build --platform linux/amd64 -t expensemanagerapplication .
+docker tag expensemanagerapplication:latest dockermerch/expensemanagerapplication:latest
+docker push dockermerch/expensemanagerapplication:latest
+
+Running in EC2
+docker pull dockermerch/expensemanagerapplication:latest
+docker run --name my-springboot-app --platform linux/x86_64 --network=springboot-postgres-net -e SPRING_DATASOURCE_URL=jdbc:postgresql://my-postgres-db:5432/expense -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=mypassword -p 8080:8080 -d dockermerch/expensemanagerapplication:latest
+
+
+
+SETUP OPTIONAL:
+docker pull --platform linux/x86_64 postgres:16
+docker run --name my-postgres-db --platform linux/x86_64 --network=springboot-postgres-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=expense -p 5431:5432 -d postgres:16
